@@ -2,7 +2,6 @@ from collections import defaultdict
 import re
 import en_core_web_md
 
-
 RE_COMBINE_WHITESPACE = re.compile(r"\s+")
 
 
@@ -17,7 +16,7 @@ class Processor:
         self.wfrequencies = defaultdict(int)
         if simple_tokenizer:
             self.tokens = [[word for word in document.lower().split() if word not in self.custom_stopwords]
-                        for document in self.corpus]
+                           for document in self.corpus]
         else:
             self.spacy_tokenizer()
         self.count_word_frequencies()
@@ -27,7 +26,7 @@ class Processor:
 
     def pre_tokenize(self):
         for text in self.raw:
-            tmp = text.translate({ord(c): " " for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+1234567890"})
+            tmp = text.translate({ord(c): " " for c in "!@#$%^&*()[]{};:,./<>?\\|`~-=_+1234567890"})
             tmp = RE_COMBINE_WHITESPACE.sub(" ", tmp)
             self.corpus.append(tmp)
 
@@ -40,7 +39,6 @@ class Processor:
             proj_tok = [token.lemma_.lower() for token in summary if
                         token.pos_ not in removal and not token.is_stop and token.is_alpha]
             self.tokens.append(proj_tok)
-
 
     def preprocess(self, force=False, min_freq=5, max_freq=200):
         if self.processed is None or force:
