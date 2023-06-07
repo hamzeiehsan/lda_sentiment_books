@@ -121,7 +121,7 @@ class BookShelf:
         self.book_dict = {}
 
     def generate_book_dict(self):
-        self.book_dict = {book.book_name:book for book in self.books}
+        self.book_dict = {book.book_name: book for book in self.books}
 
     def add_book(self, book):
         self.books.append(book)
@@ -169,7 +169,7 @@ class Book:
         for idx, starter in enumerate(part_pattern_starter):
             start = self.trimmed_text.index(starter)
             if idx < len(part_pattern_starter) - 1:
-                end = self.trimmed_text.index(part_pattern_starter[idx+1])
+                end = self.trimmed_text.index(part_pattern_starter[idx + 1])
             else:
                 end = len(self.trimmed_text) - 1
             part = self.trimmed_text[start:end]
