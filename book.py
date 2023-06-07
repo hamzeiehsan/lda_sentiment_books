@@ -143,3 +143,13 @@ if __name__ == "__main__":
                         "Final Thoughts:"]
     b4.find_parts(b4_parts_starter)
     b4.find_paragraphs()
+
+    # create the fifth book
+    b5 = Book(book_name="Menopausing", text_address="corpus/Menopausing-latin1-with relevant image text.txt")
+    # read and trim the text contetns
+    b5.read_and_trim(start_phrase="INTRODUCTION:",
+                     end_phrase="MENOPAUSE WARRIORS")
+    b5_parts_starter = ["INTRODUCTION:"]
+    b5_parts_starter.extend(["Chapter {}\n".format(i) for i in range(1,15)])
+    b5.find_parts(b5_parts_starter)
+    b5.find_paragraphs()
