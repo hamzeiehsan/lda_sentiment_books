@@ -118,12 +118,34 @@ class BookShelf:
 
     def __init__(self):
         self.books = []
+        self.book_dict = {}
+
+    def generate_book_dict(self):
+        self.book_dict = {book.book_name:book for book in self.books}
 
     def add_book(self, book):
         self.books.append(book)
+        self.book_dict[book.book_name] = book
 
     def add_books(self, books):
         self.books.extend(books)
+        for book in books:
+            self.book_dict[book.book_name] = book
+
+    def create_corpus(self, book='all'):
+        if book == 'all':
+            books_names = [book.book_name for book in self.books]
+        else:
+            books_names = [book]
+        corpus = []
+        corpus_info = {}
+        for book_name in books_names:
+            corpus_info[book_name] = {}
+            b = self.book_dict[book_name]
+            for part, paragraphs in b.paragraphs.items():
+                corpus_info[book_name][part] = {'start': len(corpus), 'end': len(corpus) + len(paragraphs)}
+                corpus.extend(paragraphs)
+        return corpus, corpus_info
 
 
 class Book:
