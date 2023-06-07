@@ -2,3 +2,5 @@
 .idea/
 .idea
 *.html
+__pycache__/
+__pycache__
