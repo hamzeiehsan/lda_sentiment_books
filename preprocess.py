@@ -1,13 +1,19 @@
 from collections import defaultdict
 import re
 import en_core_web_md
+import pandas as pd
 
 RE_COMBINE_WHITESPACE = re.compile(r"\s+")
 
 
 class Processor:
     def __init__(self, corpus, simple_tokenizer=True):
-        self.raw = corpus
+        if isinstance(corpus, list):
+            self.raw = corpus
+            self.df = None
+        elif isinstance(corpus, pd.DataFrame):
+            self.raw = list(corpus['paragraph'])
+            self.df = corpus
         self.corpus = []
         self.pre_tokenize()
         self.processed = None
@@ -54,3 +60,9 @@ class Processor:
         for text in self.tokens:
             for token in text:
                 self.wfrequencies[token] += 1
+
+    def map_to_df(self):
+        if self.df is not None:
+            self.df['tokens'] = self.tokens
+            if self.processed is not None:
+                self.df['processed'] = self.processed
