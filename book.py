@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 class BookShelf:
     @staticmethod
     def read_menopause_books():
@@ -146,6 +149,27 @@ class BookShelf:
                 corpus_info[book_name][part] = {'start': len(corpus), 'end': len(corpus) + len(paragraphs)}
                 corpus.extend(paragraphs)
         return corpus, corpus_info
+
+    def create_corpus_df(self):
+        df_dict_list = []
+        for b in self.books:
+            for part, paragraphs in b.paragraphs.items():
+                for idx, p in enumerate(paragraphs):
+                    df_dict_list.append({"book": b.book_name,
+                                         "chapter": part + 1,
+                                         "paragraph_number": idx + 1,
+                                         "paragraph": p})
+
+        return pd.DataFrame(df_dict_list)
+
+
+    def create_corpus_custom_df(self, book, chapters=[]):
+        all_df = self.create_corpus_df()
+        if len(chapters) == 0:
+            chapters = [i+1 for i in range(len(self.book_dict[book].parts))]
+        book_df = all_df[all_df['book'] == book]
+        chapters_df = book_df[book_df['chapter'].isin(chapters)]
+        return chapters_df
 
 
 class Book:
