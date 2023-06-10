@@ -68,9 +68,6 @@ class LDAModel:
                                  passes=100)
         lda_model.print_topics(-1)
         self.lda_model = lda_model
-        self.corpus_topics = [sorted(self.lda_model[self.bow_corpus][text])[0][0]
-                              for text in range(len(self.processed))] # todo this is wrong
-        self.df['topic'] = self.corpus_topics  # todo this wrong!
 
     def format_topics_sentences(self):
         # empty data frame
