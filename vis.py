@@ -15,7 +15,7 @@ class Vis:
             "#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"
         ]
 
-    def treemap_chapter_sentiments(self, file_name='chapter_sentiments.html'):
+    def treemap_chapter_sentiments(self, file_name='figures/chapter_sentiments.html'):
         df_tmp = self.df.\
             groupby(['book', 'chapter', 'sentiment'], as_index=False).\
             agg({'paragraph_number': ['count']})
@@ -30,8 +30,7 @@ class Vis:
         fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
         fig.write_html(file_name)
 
-
-    def treemap_chapter_theme(self, file_name='chapter_topic.html'):
+    def treemap_chapter_theme(self, file_name='figures/chapter_topic.html'):
         df_tmp = self.df. \
             groupby(['book', 'chapter', 'dominant_topic'], as_index=False). \
             agg({'paragraph_number': ['count']})
@@ -51,7 +50,7 @@ class Vis:
         fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
         fig.write_html(file_name)
 
-    def treemap_topic_sentiment(self, file_name='topic_sentiment.html'):
+    def treemap_topic_sentiment(self, file_name='figures/topic_sentiment.html'):
         df_tmp = self.df. \
             groupby(['book', 'dominant_topic', 'sentiment'], as_index=False). \
             agg({'paragraph_number': ['count']})
