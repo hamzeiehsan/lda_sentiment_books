@@ -40,4 +40,4 @@ class Sentiment:
             return 'POSITIVE'
         elif tags['NEGATIVE']/tags['POSITIVE'] >= 1.5:
             return 'NEGATIVE'
-        return 'NETURAL'
+        return 'NEUTRAL'
