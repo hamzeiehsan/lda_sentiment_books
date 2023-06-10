@@ -7,3 +7,4 @@ __pycache__
 todo.md
 .ipynb_checkpoints
 .ipynb_checkpoints/
+*.csv
