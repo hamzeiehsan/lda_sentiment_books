@@ -1,3 +1,5 @@
+import logging
+
 from flair.data import Sentence
 from flair.nn import Classifier
 from spacy.lang.en import English
@@ -15,6 +17,7 @@ class Sentiment:
             self.tagger = Classifier.load('sentiment')
 
     def predict(self):
+        logging.info('start computing the sentiments - the process will take time, be patient')
         self.df['sentiment'] = self.df['paragraph'].apply(lambda x: self.single_predict(x))
 
     def single_predict(self, paragraph):
@@ -41,3 +44,8 @@ class Sentiment:
         elif tags['NEGATIVE']/tags['POSITIVE'] >= 1.5:
             return 'NEGATIVE'
         return 'NEUTRAL'
+
+
+    def export_to_csv(self, file_address='out/sentiment.df'):
+        self.df.to_csv(file_address)
+        logging.info('file is writen successfully')
