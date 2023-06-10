@@ -1,10 +1,14 @@
 import pandas as pd
+import logging
+
+
+logging.basicConfig(level=logging.INFO)
 
 
 class BookShelf:
     @staticmethod
     def read_menopause_books():
-        print('start checking the book files')
+        logging.info('{} - start checking the book files'.format('Bookshelf:'))
         # create the first book object
         b1 = Book(book_name='Hormone Repair Manual', text_address='corpus/Hormone Repair Manual-latin1.txt')
         # read and trim the text contents
@@ -21,7 +25,7 @@ class BookShelf:
                             "This is the chapter for once you've achieved menopause"]
         b1.find_parts(b1_parts_starter)
         b1.find_paragraphs()
-        print("{} is preprocessed...".format(b1))
+        logging.info("\t{} is preprocessed...".format(b1))
 
         # create the second book
         b2 = Book(book_name="Next Level", text_address="corpus/Next Level-latin1.txt")
@@ -50,7 +54,7 @@ class BookShelf:
                             ]
         b2.find_parts(b2_parts_starter)
         b2.find_paragraphs()
-        print("{} is preprocessed...".format(b2))
+        logging.info("\t{} is preprocessed...".format(b2))
 
         # create the third book
         b3 = Book(book_name="Queen Menopause", text_address="corpus/Queen Menopause-latin1.txt")
@@ -61,7 +65,7 @@ class BookShelf:
         b3_parts_starter.extend(["CHAPTER {}".format(i) for i in range(2, 13)])
         b3.find_parts(b3_parts_starter)
         b3.find_paragraphs()
-        print("{} is preprocessed...".format(b3))
+        logging.info("\t{} is preprocessed...".format(b3))
 
         # create the fourth book
         b4 = Book(book_name="The Menopause Manifesto", text_address="corpus/The Menopause Manifesto-latin1.txt")
@@ -100,6 +104,7 @@ class BookShelf:
                             "Final Thoughts:"]
         b4.find_parts(b4_parts_starter)
         b4.find_paragraphs()
+        logging.info("\t{} is preprocessed...".format(b4))
 
         # create the fifth book
         b5 = Book(book_name="Menopausing", text_address="corpus/Menopausing-latin1-with relevant image text.txt")
@@ -110,6 +115,7 @@ class BookShelf:
         b5_parts_starter.extend(["Chapter {}\n".format(i) for i in range(1, 15)])
         b5.find_parts(b5_parts_starter)
         b5.find_paragraphs()
+        logging.info("\t{} is preprocessed...".format(b4))
 
         bookshelf = BookShelf()
         bookshelf.add_book(b1)
@@ -117,6 +123,7 @@ class BookShelf:
         bookshelf.add_book(b3)
         bookshelf.add_book(b4)
         bookshelf.add_book(b5)
+        logging.info('all books are added to the bookshelf object.\n')
         return bookshelf
 
     def __init__(self):
@@ -185,7 +192,7 @@ class Book:
         with open(self.text_address, 'r', encoding='latin-1') as fp:
             self.whole_text = fp.read()
         self.trimmed_text = self.whole_text[self.whole_text.index(start_phrase):self.whole_text.index(end_phrase)]
-        print('text are trimmed - {}'.format(self.book_name))
+        logging.info('\t\ttext are trimmed - {}'.format(self.book_name))
 
     def find_parts(self, part_pattern_starter):
         if self.parts is None or len(self.parts) > 0:
@@ -198,8 +205,10 @@ class Book:
                 end = len(self.trimmed_text) - 1
             part = self.trimmed_text[start:end]
             self.parts.append(part)
+        logging.info('\t\t{} parts are identified'.format(len(self.parts)))
 
     def find_paragraphs(self, paragraph_pattern='\t', length_thresholds=150):
+        len_parags = 0
         for idx, part in enumerate(self.parts):
             if idx not in self.paragraphs.keys():
                 self.paragraphs[idx] = []
@@ -210,6 +219,8 @@ class Book:
                 if len(split.strip()) > length_thresholds:
                     self.paragraphs[idx].append(current)
                     current = ''
+            len_parags += len(self.paragraphs[idx])
+        logging.info('\t\tparagraphs are identified, total number of paragraphs in this book: {}\n'.format(len_parags))
 
     def __str__(self):
         return self.book_name
