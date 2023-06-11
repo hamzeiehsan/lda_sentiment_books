@@ -50,7 +50,7 @@ class Vis:
 
         for tid, t in enumerate(topics):
             color_map[str(t)] = self.colorset_treemap[tid]
-        print(color_map)
+
         fig = px.treemap(df_tmp, path=[px.Constant("bookshelf"), 'book', 'chapter', 'dominant_topic'],
                          values='paragraph_number',
                          color='dominant_topic',
