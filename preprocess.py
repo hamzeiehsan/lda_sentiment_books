@@ -11,7 +11,7 @@ RE_COMBINE_WHITESPACE = re.compile(r"\s+")
 
 
 class Processor:
-    def __init__(self, corpus, simple_tokenizer=False, custom_stopwords=[]):
+    def __init__(self, corpus, simple_tokenizer=True, custom_stopwords=[]):
         logging.info("Preprocessor initiated...")
         if isinstance(corpus, list):
             self.raw = corpus
@@ -37,7 +37,8 @@ class Processor:
 
         self.wfrequencies = defaultdict(int)
         if simple_tokenizer:
-            self.tokens = [[word for word in document.lower().split() if word not in self.custom_stopwords]
+            self.tokens = [[word.strip() for word in document.lower().split() if
+                            word.strip() not in self.stopwords and len(word.strip()) > 2]
                            for document in self.corpus]
         else:
             self.spacy_tokenizer()
@@ -53,9 +54,6 @@ class Processor:
         for text in self.raw:
             tmp = text.translate({ord(c): " " for c in "!@#$%^&*()[]{};:,./<>?\\|`~-=_+1234567890"})
             tmp = RE_COMBINE_WHITESPACE.sub(" ", tmp)
-            for sw in self.stopwords:
-                if sw in tmp.lower():
-                    tmp = tmp.lower().replace(sw, "")
             self.corpus.append(tmp)
         logging.info("\tAll paragraph are normalized by removing unwanted characters")
 
@@ -65,10 +63,11 @@ class Processor:
 
         self.tokens = []
         for summary in self.nlp.pipe(self.corpus):
-            proj_tok = [token.lemma_.lower() for token in summary if
-                        token.pos_ not in removal and not token.is_stop and token.is_alpha]
+            proj_tok = [token.text.lower() for token in summary if
+                        token.pos_ not in removal and not token.is_stop and token.is_alpha and
+                        token.text.lower() not in self.stopwords]
             self.tokens.append(proj_tok)
-        logging.info("Spacy lemmatization, listed POS removal and stopwords removal are done...")
+        logging.info("Spacy listed POS removal and stopwords removal are done...")
 
     def preprocess(self, force=False, min_freq=5, max_freq=200):
         if self.processed is None or force:
