@@ -18,13 +18,13 @@ class LDAModel:
         self.lda_model = None
         self.corpus_topics = []
 
-    def preprocess(self, simple_tokenizer=True):
+    def preprocess(self, simple_tokenizer=True, custom_stopwords=[]):
         self.processor = Processor(self.df, simple_tokenizer)
         # here, I can run any fancy preprocessing workflow that I need :)
         self.processor.preprocess()
         self.processed = self.processor.processed
+        self.processor.map_to_df()
         self.df = self.processor.df
-
 
     def create_bow_model(self, filter_below=5, filter_above=200, keep_n=4000):
         self.dictionary = Dictionary(self.processed)
