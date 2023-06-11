@@ -28,10 +28,10 @@ class Sentiment:
         for sent in nlp_paragraph.sents:
             sentence = Sentence(sent.text)
             self.tagger.predict(sentence)
-            sentiments[idx] = {'len': len(sent.text)/len(paragraph),
+            sentiments[idx] = {'len': len(sent.text) / len(paragraph),
                                'tag': sentence.tag,
                                'score': sentence.score}
-            tags[sentence.tag] += sentiments[idx]['len']*sentiments[idx]['score']
+            tags[sentence.tag] += sentiments[idx]['len'] * sentiments[idx]['score']
             idx += 1
         if tags['POSITIVE'] == 0 and tags['NEGATIVE'] == 0:
             return 'NEUTRAL'
@@ -39,13 +39,12 @@ class Sentiment:
             return 'NEGATIVE'
         elif tags['NEGATIVE'] == 0:
             return 'POSITIVE'
-        elif tags['POSITIVE']/tags['NEGATIVE'] >= 1.5:
+        elif tags['POSITIVE'] / tags['NEGATIVE'] >= 1.5:
             return 'POSITIVE'
-        elif tags['NEGATIVE']/tags['POSITIVE'] >= 1.5:
+        elif tags['NEGATIVE'] / tags['POSITIVE'] >= 1.5:
             return 'NEGATIVE'
         return 'NEUTRAL'
 
-
-    def export_to_csv(self, file_address='out/sentiment.df'):
+    def export_to_csv(self, file_address='out/sentiment.csv'):
         self.df.to_csv(file_address)
         logging.info('file is writen successfully')
