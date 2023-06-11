@@ -176,6 +176,7 @@ class BookShelf:
             chapters = [i+1 for i in range(len(self.book_dict[book].parts))]
         book_df = all_df[all_df['book'] == book]
         chapters_df = book_df[book_df['chapter'].isin(chapters)]
+        chapters_df = chapters_df.reset_index()
         return chapters_df
 
 
