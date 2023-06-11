@@ -1,11 +1,14 @@
 import logging
-
+import math
 import numpy as np
-import matplotlib
+
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import pyLDAvis.gensim_models
 import pyLDAvis
+
 
 class Vis:
     def __init__(self, sentiment, lda, notebook=False):
@@ -20,8 +23,8 @@ class Vis:
         ]
 
     def treemap_chapter_sentiments(self, file_name='figures/chapter_sentiments.html'):
-        df_tmp = self.df.\
-            groupby(['book', 'chapter', 'sentiment'], as_index=False).\
+        df_tmp = self.df. \
+            groupby(['book', 'chapter', 'sentiment'], as_index=False). \
             agg({'paragraph_number': ['count']})
         df_tmp.columns = df_tmp.columns.droplevel(1)
         fig = px.treemap(df_tmp, path=[px.Constant("bookshelf"), 'book', 'chapter', 'sentiment'],
@@ -43,7 +46,7 @@ class Vis:
         df_tmp['dominant_topic'] = df_tmp['dominant_topic'].astype(str)
 
         topics = list(self.df['dominant_topic'].unique())
-        color_map = {'(?)':'lightgrey'}
+        color_map = {'(?)': 'lightgrey'}
 
         for tid, t in enumerate(topics):
             color_map[str(t)] = self.colorset_treemap[tid]
@@ -76,8 +79,49 @@ class Vis:
         logging.info('topic-sentiment treemap html is saved in: \n\t{}'.format(file_name))
 
     def pyviz_topics(self, file_name='figures/pyvis_topics.html'):
-        lda_display = pyLDAvis.gensim_models.prepare(self.lda_model,
+        lda_display = pyLDAvis.gensim_models.prepare(self.lda.lda_model,
                                                      self.lda.bow_corpus,
                                                      self.lda.dictionary)
         pyLDAvis.save_html(lda_display, file_name)
         logging.info('pyvis html visualization is saved in: \n\t{}'.format(file_name))
+
+    @staticmethod
+    def generate_topic_words(topic_text, stopwords):
+        w_dict = {}
+        words = topic_text.replace("\n", ' ').replace(".", " ").replace(", ", " ").replace("\t", ' ').split(' ')
+        for w in words:
+            if len(w) > 2 and w.lower() not in stopwords and "'" not in w:
+                if w not in w_dict.keys():
+                    w_dict[w] = 0
+                w_dict[w] += 1
+        return w_dict
+
+    def generate_topics_wordcloud(self, file_name='figures/wordclouds.svg'):
+        self.df["processed_text"] = self.df['processed'].apply(" ".join)
+        topic_texts_df = self.df.groupby(['dominant_topic'])['processed_text'].apply(
+            ' '.join).reset_index()
+
+        cloud = WordCloud(background_color='white',
+                          width=2500,
+                          height=1800,
+                          max_words=60,
+                          prefer_horizontal=1.0)
+
+        fig, axes = plt.subplots(math.ceil(len(topic_texts_df) / 2), 2, figsize=(10, 10),
+                                 sharex=True, sharey=True)
+        for idx, row in topic_texts_df.iterrows():
+            # axs[0, 0].plot(x, y)
+            # axs[0, 0].set_title('Axis [0, 0]')
+            fig.add_subplot(axes[math.floor(idx / 2), idx % 2])
+            topic_words = row['processed_text']
+            cloud.generate_from_frequencies(Vis.generate_topic_words(
+                topic_words, self.lda.processor.stopwords),
+                max_font_size=300)
+
+            plt.gca().imshow(cloud)
+            plt.gca().set_title('Topic ' + str((idx + 1)), fontdict=dict(size=16))
+            plt.gca().axis('off')
+        if len(topic_texts_df) % 2 == 1:  # remove extra empty plot in case of odd number of topics
+            fig.delaxes(axes[math.floor(len(topic_texts_df) / 2)][1])
+        plt.savefig(file_name, format='svg', dpi=1200)
+        logging.info("wordclouds are generated and saved in:\t{}".format(file_name))
