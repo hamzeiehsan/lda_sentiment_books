@@ -20,10 +20,21 @@ class Processor:
             self.raw = list(corpus['paragraph'])
             self.df = corpus
         self.corpus = []
+        self.custom_stopwords = custom_stopwords
+
+        self.nlp = en_core_web_md.load()
+
+        # adding custom stopwords to the set
+        stopwords = self.nlp.Defaults.stop_words
+        logging.info("\tstopwords length (standard): {}".format(len(stopwords)))
+        stopwords = list(stopwords)
+        stopwords.extend(self.custom_stopwords)
+        self.stopwords = stopwords
+        logging.info("\tstopwords length: {}".format(len(self.stopwords)))
+
         self.pre_tokenize()
         self.processed = None
-        self.custom_stopwords = custom_stopwords
-        self.stopwords = custom_stopwords
+
         self.wfrequencies = defaultdict(int)
         if simple_tokenizer:
             self.tokens = [[word for word in document.lower().split() if word not in self.custom_stopwords]
@@ -42,26 +53,20 @@ class Processor:
         for text in self.raw:
             tmp = text.translate({ord(c): " " for c in "!@#$%^&*()[]{};:,./<>?\\|`~-=_+1234567890"})
             tmp = RE_COMBINE_WHITESPACE.sub(" ", tmp)
+            for sw in self.stopwords:
+                if sw in tmp.lower():
+                    tmp = tmp.lower().replace(sw, "")
             self.corpus.append(tmp)
         logging.info("\tAll paragraph are normalized by removing unwanted characters")
 
     def spacy_tokenizer(self):
-        nlp = en_core_web_md.load()
-
-        # adding custom stopwords to the set
-        stopwords = nlp.Defaults.stop_words
-        stopwords = list(stopwords)
-        stopwords.extend(self.custom_stopwords)
-        self.stopwords = stopwords
-
         # POS tags to remove
         removal = ['ADV', 'PRON', 'CCONJ', 'PUNCT', 'PART', 'DET', 'ADP', 'SPACE', 'NUM', 'SYM']
 
         self.tokens = []
-        for summary in nlp.pipe(self.corpus):
+        for summary in self.nlp.pipe(self.corpus):
             proj_tok = [token.lemma_.lower() for token in summary if
-                        token.pos_ not in removal and not token.is_stop and token.is_alpha and
-                        token.lower() not in stopwords and token.lemma_.lower() not in stopwords]
+                        token.pos_ not in removal and not token.is_stop and token.is_alpha]
             self.tokens.append(proj_tok)
         logging.info("Spacy lemmatization, listed POS removal and stopwords removal are done...")
 

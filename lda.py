@@ -20,9 +20,9 @@ class LDAModel:
         self.hdp_model = None
         self.corpus_topics = []
 
-    def preprocess(self, simple_tokenizer=True, custom_stopwords=[]):
+    def preprocess(self, simple_tokenizer=False, custom_stopwords=[]):
         logging.info("Calling preprocessing in LDA model:\n")
-        self.processor = Processor(self.df, simple_tokenizer)
+        self.processor = Processor(self.df, simple_tokenizer, custom_stopwords)
         # here, I can run any fancy preprocessing workflow that I need :)
         self.processor.preprocess()
         self.processed = self.processor.processed
