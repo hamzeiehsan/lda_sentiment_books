@@ -1,5 +1,6 @@
 import logging
 
+import pandas as pd
 from flair.data import Sentence
 from flair.nn import Classifier
 from spacy.lang.en import English
@@ -16,9 +17,19 @@ class Sentiment:
         else:
             self.tagger = Classifier.load('sentiment')
 
-    def predict(self):
-        logging.info('start computing the sentiments - the process will take time, be patient')
-        self.df['sentiment'] = self.df['paragraph'].apply(lambda x: self.single_predict(x))
+    def predict(self,  load_from_file=False, file_name='out/sentiment.csv'):
+        if load_from_file:
+            logging.info("loading sentiments from already exported file:\n\t{}".format(file_name))
+            tmp_df = pd.read_csv(file_name)
+            len_before = len(self.df)
+            tmp_df = tmp_df[['book', 'chapter', 'paragraph_number', 'sentiment']]
+            self.df = pd.merge(self.df, tmp_df, how='left',
+                               left_on=['book', 'chapter', 'paragraph_number'],
+                               right_on=['book', 'chapter', 'paragraph_number'])
+            logging.info("left join done and sentiments are loaded - check: {0}=={1}?".format(len_before, len(self.df)))
+        else:
+            logging.info('start computing the sentiments - the process will take time, be patient')
+            self.df['sentiment'] = self.df['paragraph'].apply(lambda x: self.single_predict(x))
 
     def single_predict(self, paragraph):
         sentiments = {}
