@@ -8,3 +8,4 @@ todo.md
 .ipynb_checkpoints
 .ipynb_checkpoints/
 *.csv
+*.svg
