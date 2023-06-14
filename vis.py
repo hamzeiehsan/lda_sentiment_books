@@ -120,7 +120,7 @@ class Vis:
                 max_font_size=300)
 
             plt.gca().imshow(cloud)
-            plt.gca().set_title('Topic ' + str((idx + 1)), fontdict=dict(size=16))
+            plt.gca().set_title('Topic ' + str(row['dominant_topic']), fontdict=dict(size=16))
             plt.gca().axis('off')
         if len(topic_texts_df) % 2 == 1:  # remove extra empty plot in case of odd number of topics
             fig.delaxes(axes[math.floor(len(topic_texts_df) / 2)][1])

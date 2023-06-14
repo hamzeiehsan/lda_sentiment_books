@@ -101,7 +101,7 @@ class LDAModel:
                     wp = model.show_topic(topic_num)
                     topic_keywords = ", ".join([word for word, prop in wp])
                     sent_topics_df = pd.concat([sent_topics_df, pd.DataFrame(
-                        [pd.Series([int(topic_num), round(prop_topic, 4), topic_keywords])])], ignore_index=True)
+                        [pd.Series([int(topic_num)+1, round(prop_topic, 4), topic_keywords])])], ignore_index=True)
                 else:
                     break
         sent_topics_df.columns = ['dominant_topic', 'perc_contribution', 'topic_keywords']
