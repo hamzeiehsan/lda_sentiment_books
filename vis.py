@@ -81,7 +81,8 @@ class Vis:
     def pyviz_topics(self, file_name='figures/pyvis_topics.html'):
         lda_display = pyLDAvis.gensim_models.prepare(self.lda.lda_model,
                                                      self.lda.bow_corpus,
-                                                     self.lda.dictionary)
+                                                     self.lda.dictionary,
+                                                     sort_topics=False)
         pyLDAvis.save_html(lda_display, file_name)
         logging.info('pyvis html visualization is saved in: \n\t{}'.format(file_name))
 
