@@ -126,3 +126,61 @@ class Vis:
             fig.delaxes(axes[math.floor(len(topic_texts_df) / 2)][1])
         plt.savefig(file_name, format='svg', dpi=1200)
         logging.info("wordclouds are generated and saved in:\t{}".format(file_name))
+
+    def generate_sentiments_wordcloud(self, file_name='figures/wordclouds_sentiments.svg'):
+        self.df["processed_text"] = self.df['processed'].apply(" ".join)
+        sentiment_texts_df = self.df.groupby(['sentiment'])['processed_text'].apply(
+            ' '.join).reset_index()
+
+        cloud = WordCloud(background_color='white',
+                          width=2500,
+                          height=1800,
+                          max_words=60,
+                          prefer_horizontal=1.0)
+
+        fig, axes = plt.subplots(3, 1, figsize=(10, 10),
+                                 sharex=True, sharey=True)
+        for idx, row in sentiment_texts_df.iterrows():
+            fig.add_subplot(axes[idx])
+            sentiment_words = row['processed_text']
+            cloud.generate_from_frequencies(Vis.generate_topic_words(
+                sentiment_words, self.lda.processor.stopwords),
+                max_font_size=300)
+
+            plt.gca().imshow(cloud)
+            plt.gca().set_title('Sentiment: ' + str(row['sentiment']), fontdict=dict(size=16))
+            plt.gca().axis('off')
+        plt.savefig(file_name, format='svg', dpi=1200)
+        logging.info("wordclouds are generated and saved in:\t{}".format(file_name))
+
+    def generate_topic_sentiments_wordcloud(self, file_name='figures/wordclouds_topic_sentiments.svg'):
+        self.df["processed_text"] = self.df['processed'].apply(" ".join)
+        st_texts_df = self.df.groupby(['dominant_topic', 'sentiment'])['processed_text'].apply(
+            ' '.join).reset_index()
+
+        cloud = WordCloud(background_color='white',
+                          width=2500,
+                          height=1800,
+                          max_words=60,
+                          prefer_horizontal=1.0)
+
+        fig, axes = plt.subplots(len(st_texts_df['dominant_topic'].unique()), 3, figsize=(10, 10),
+                                 sharex=True, sharey=True)
+        for idx, row in st_texts_df.iterrows():
+            col = 0
+            if row['sentiment'] == 'NEUTRAL':
+                col = 1
+            elif row['sentiment'] == 'NEGATIVE':
+                col = 2
+            fig.add_subplot(axes[int(row['dominant_topic'])-1, col])
+            st_words = row['processed_text']
+            cloud.generate_from_frequencies(Vis.generate_topic_words(
+                st_words, self.lda.processor.stopwords),
+                max_font_size=300)
+
+            plt.gca().imshow(cloud)
+            plt.gca().set_title('Topic {0}:{1}'.format(str(row['dominant_topic']),
+                                                       str(row['sentiment'])), fontdict=dict(size=16))
+            plt.gca().axis('off')
+        plt.savefig(file_name, format='svg', dpi=1200)
+        logging.info("wordclouds are generated and saved in:\t{}".format(file_name))
