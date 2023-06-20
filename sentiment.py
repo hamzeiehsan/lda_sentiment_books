@@ -17,19 +17,22 @@ class Sentiment:
         else:
             self.tagger = Classifier.load('sentiment')
 
-    def predict(self,  load_from_file=False, file_name='out/sentiment.csv'):
+    def predict(self, load_from_file=False, file_name='out/sentiment.csv'):
         if load_from_file:
             logging.info("loading sentiments from already exported file:\n\t{}".format(file_name))
             tmp_df = pd.read_csv(file_name)
             len_before = len(self.df)
-            tmp_df = tmp_df[['book', 'chapter', 'paragraph_number', 'sentiment']]
+            tmp_df = tmp_df[['book', 'chapter', 'paragraph_number', 'sentiment',
+                             'positive_counts', 'negative_counts',
+                             'sentiment_details']]
             self.df = pd.merge(self.df, tmp_df, how='left',
                                left_on=['book', 'chapter', 'paragraph_number'],
                                right_on=['book', 'chapter', 'paragraph_number'])
             logging.info("left join done and sentiments are loaded - check: {0}=={1}?".format(len_before, len(self.df)))
         else:
             logging.info('start computing the sentiments - the process will take time, be patient')
-            self.df['sentiment'] = self.df['paragraph'].apply(lambda x: self.single_predict(x))
+            self.df['sentiment'], self.df['positive_counts'], self.df['negative_counts'], self.df['sentiment_details'] = \
+                zip(*self.df['paragraph'].apply(lambda x: self.single_predict(x)))
 
     def single_predict(self, paragraph):
         sentiments = {}
@@ -45,16 +48,16 @@ class Sentiment:
             tags[sentence.tag] += sentiments[idx]['len'] * sentiments[idx]['score']
             idx += 1
         if tags['POSITIVE'] == 0 and tags['NEGATIVE'] == 0:
-            return 'NEUTRAL'
+            return 'NEUTRAL', tags['POSITIVE'], tags['NEGATIVE'], sentiments
         elif tags['POSITIVE'] == 0:
-            return 'NEGATIVE'
+            return 'NEGATIVE', tags['POSITIVE'], tags['NEGATIVE'], sentiments
         elif tags['NEGATIVE'] == 0:
-            return 'POSITIVE'
+            return 'POSITIVE', tags['POSITIVE'], tags['NEGATIVE'], sentiments
         elif tags['POSITIVE'] / tags['NEGATIVE'] >= 1.5:
-            return 'POSITIVE'
+            return 'POSITIVE', tags['POSITIVE'], tags['NEGATIVE'], sentiments
         elif tags['NEGATIVE'] / tags['POSITIVE'] >= 1.5:
-            return 'NEGATIVE'
-        return 'NEUTRAL'
+            return 'NEGATIVE', tags['POSITIVE'], tags['NEGATIVE'], sentiments
+        return 'NEUTRAL', tags['POSITIVE'], tags['NEGATIVE'], sentiments
 
     def export_to_csv(self, file_address='out/sentiment.csv'):
         self.df.to_csv(file_address)
