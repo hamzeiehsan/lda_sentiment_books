@@ -17,4 +17,5 @@ Here, we have implemented several classes to make the process of topic modelling
 - flair
 - spacy (run: 'python -m spacy download en_core_web_md' after installation)
 - wordcloud
+- plotnine (run: pip install 'plotnine[all]')
 
