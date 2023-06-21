@@ -9,6 +9,7 @@ import seaborn as sns
 import plotly.express as px
 import pyLDAvis.gensim_models
 import pyLDAvis
+from plotnine import *
 
 
 class Vis:
@@ -22,6 +23,7 @@ class Vis:
             "#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7",
             "#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"
         ]
+        self.sent_sentiment = self.create_detailed_sentiment_info()
 
     def treemap_chapter_sentiments(self, file_name='figures/chapter_sentiments.html'):
         df_tmp = self.df. \
@@ -215,3 +217,34 @@ class Vis:
                 list_dict_info.append(tmp)
         sentence_level_df = pd.DataFrame(list_dict_info)
         return sentence_level_df
+
+    def plot_sentiment_score_distributions(self,
+                                           file_name='figures/sentiment_score_distribution.png',
+                                           alpha=0.1):
+        fig = (ggplot(self.sent_sentiment,
+                      aes(x='sentence_sentiment_score', color='sentence_sentiment', fill='sentence_sentiment'))
+               + geom_density(alpha=alpha)
+               )
+        fig.save(file_name, dpi=300)
+        logging.info("sentiment distribution plot is generated and saved in:\t{}".format(file_name))
+
+    def plot_sentiment_score_distributions_violin(self, file_name='figures/sentiment_score_distribution_violin.png'):
+
+        sns.boxplot(x='dominant_topic', y='sentence_sentiment_score', notch=True,
+                    data=self.sent_sentiment, showfliers=True)
+        plt.xticks(rotation=90)
+        plt.savefig(file_name, dpi=300)
+        logging.info("sentiment distribution - violin plot is generated and saved in:\t{}".format(file_name))
+
+    def plot_sentiment_distributions_per_topic(self,
+                                               file_name='figures/sentiment_distribution_per_topic.png'):
+        df_tmp = self.sent_sentiment. \
+            groupby(['dominant_topic', 'sentence_sentiment'], as_index=False). \
+            agg({'sentence_number': ['count']})
+        df_tmp.columns = df_tmp.columns.droplevel(1)
+        fig = (ggplot(df_tmp, aes('dominant_topic', 'sentence_number', fill='sentence_sentiment'))
+               + geom_col()
+               + scale_x_continuous()
+               )
+        fig.save(file_name, dpi=300)
+        logging.info("sentiment distribution plot is generated and saved in:\t{}".format(file_name))
