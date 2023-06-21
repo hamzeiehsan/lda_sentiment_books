@@ -248,3 +248,51 @@ class Vis:
                )
         fig.save(file_name, dpi=300)
         logging.info("sentiment distribution plot is generated and saved in:\t{}".format(file_name))
+
+    def generate_stat_report_sentiment_per_sentence(self):
+        df_tmp = self.sent_sentiment. \
+            groupby(['sentence_sentiment'], as_index=False). \
+            agg({'sentence_sentiment_score': ['count', 'median', 'mean']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_sentence_per_book(self):
+        df_tmp = self.sent_sentiment. \
+            groupby(['book', 'sentence_sentiment'], as_index=False). \
+            agg({'sentence_sentiment_score': ['count', 'median', 'mean']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_sentence_per_chapter(self):
+        df_tmp = self.sent_sentiment. \
+            groupby(['book', 'chapter', 'sentence_sentiment'], as_index=False). \
+            agg({'sentence_sentiment_score': ['count', 'median', 'mean']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_sentence_per_topic(self):
+        df_tmp = self.sent_sentiment. \
+            groupby(['dominant_topic', 'sentence_sentiment'], as_index=False). \
+            agg({'sentence_sentiment_score': ['count', 'median', 'mean']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_paragraph(self):
+        df_tmp = self.df. \
+            groupby(['sentiment'], as_index=False). \
+            agg({'paragraph_number': ['count']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_paragraph_per_book(self):
+        df_tmp = self.df. \
+            groupby(['book', 'sentiment'], as_index=False). \
+            agg({'paragraph_number': ['count']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_paragraph_per_chapter(self):
+        df_tmp = self.df. \
+            groupby(['book', 'chapter', 'sentiment'], as_index=False). \
+            agg({'paragraph_number': ['count']})
+        return df_tmp
+
+    def generate_stat_report_sentiment_per_paragraph_per_topic(self):
+        df_tmp = self.df. \
+            groupby(['dominant_topic', 'sentiment'], as_index=False). \
+            agg({'perc_contribution': ['count', 'median', 'mean', 'min', 'max']})
+        return df_tmp
