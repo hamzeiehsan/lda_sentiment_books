@@ -111,12 +111,20 @@ class Vis:
                           max_words=60,
                           prefer_horizontal=1.0)
 
-        fig, axes = plt.subplots(math.ceil(len(topic_texts_df) / 2), 2, figsize=(10, 10),
-                                 sharex=True, sharey=True)
+        only_two = False
+        if len(topic_texts_df) == 2:
+            fig, axes = plt.subplots(2, figsize=(10, 10),
+                                     sharex=True, sharey=True)
+            only_two = True
+        else:
+            fig, axes = plt.subplots(math.ceil(len(topic_texts_df) / 2), 2, figsize=(10, 10),
+                                     sharex=True, sharey=True)
+
         for idx, row in topic_texts_df.iterrows():
-            # axs[0, 0].plot(x, y)
-            # axs[0, 0].set_title('Axis [0, 0]')
-            fig.add_subplot(axes[math.floor(idx / 2), idx % 2])
+            if only_two:
+                fig.add_subplot(axes[idx])
+            else:
+                fig.add_subplot(axes[math.floor(idx / 2), idx % 2])
             topic_words = row['processed_text']
             cloud.generate_from_frequencies(Vis.generate_topic_words(
                 topic_words, self.lda.processor.stopwords),
@@ -125,7 +133,7 @@ class Vis:
             plt.gca().imshow(cloud)
             plt.gca().set_title('Topic ' + str(row['dominant_topic']), fontdict=dict(size=16))
             plt.gca().axis('off')
-        if len(topic_texts_df) % 2 == 1:  # remove extra empty plot in case of odd number of topics
+        if not only_two and len(topic_texts_df) % 2 == 1:  # remove extra empty plot in case of odd number of topics
             fig.delaxes(axes[math.floor(len(topic_texts_df) / 2)][1])
         plt.savefig(file_name, format='svg', dpi=1200)
         logging.info("wordclouds are generated and saved in:\t{}".format(file_name))
