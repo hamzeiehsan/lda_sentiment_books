@@ -244,6 +244,15 @@ class Vis:
         plt.savefig(file_name, dpi=300)
         logging.info("sentiment distribution - violin plot is generated and saved in:\t{}".format(file_name))
 
+    def plot_sentiment_score_distributions_boxplot(self, file_name='figures/sentiment_score_distribution_boxplot.html'):
+        sns.boxplot(x='dominant_topic', y='sentence_sentiment_score', notch=True,
+                    data=self.sent_sentiment, showfliers=True)
+        fig = px.box(self.sent_sentiment, x="dominant_topic", y="sentence_sentiment_score", color="sentence_sentiment")
+        fig.update_traces(quartilemethod="exclusive")
+        fig.write_html(file_name)
+        fig.show()
+        logging.info("sentiment distribution - box plot is generated and saved in:\t{}".format(file_name))
+
     def plot_sentiment_distributions_per_topic(self,
                                                file_name='figures/sentiment_distribution_per_topic.png'):
         df_tmp = self.sent_sentiment. \
