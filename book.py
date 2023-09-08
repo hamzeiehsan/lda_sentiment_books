@@ -1,6 +1,7 @@
 import pandas as pd
 import logging
-
+import requests
+import time
 
 logging.basicConfig(level=logging.INFO)
 
@@ -8,121 +9,112 @@ logging.basicConfig(level=logging.INFO)
 class BookShelf:
     @staticmethod
     def read_sample_books():
+        end_phrase = "*** END OF THE PROJECT GUTENBERG EBOOK"
         logging.info('{} - start checking the book files'.format('Bookshelf:'))
         # create the first book object
-        b1 = Book(book_name='Hormone Repair Manual', text_address='corpus/Hormone Repair Manual-latin1.txt')
+        b1 = Book(book_name='A Christmas Carol', text_address='https://www.gutenberg.org/cache/epub/46/pg46.txt')
         # read and trim the text contents
-        b1.read_and_trim(start_phrase="Hormone revolution:\n", end_phrase="Something to look forward to.")
-        b1_parts_starter = ["Hormone revolution:",
-                            "Stigma, freedom, grief and everything in between",
-                            "Cycle while you can",
-                            "The hormonal and physiological changes of second puberty",
-                            "General maintenance for perimenopause and beyond",
-                            "Menopausal hormone therapy (MHT)",
-                            "Rewiring the brain:",
-                            "Bodily issues: weight gain",
-                            "Estrogen rollercoaster: ",
-                            "This is the chapter for once you've achieved menopause"]
+        b1.read_and_trim(start_phrase="STAVE I:  MARLEY'S GHOST", end_phrase=end_phrase)
+        b1_parts_starter = ["MARLEY was dead:",
+                            "WHEN Scrooge awoke, it was so dark",
+                            "AWAKING in the middle of a prodigiously tough snore",
+                            "THE Phantom slowly, gravely, silently, approached.",
+                            "YES! and the bedpost was his own",
+                            ]
         b1.find_parts(b1_parts_starter)
         b1.find_paragraphs()
         logging.info("\t{} is preprocessed...".format(b1))
+        time.sleep(2)
 
         # create the second book
-        b2 = Book(book_name="Next Level", text_address="corpus/Next Level-latin1.txt")
+        b2 = Book(book_name="Crime and Punishment", text_address="https://www.gutenberg.org/files/2554/2554-0.txt")
         # read and trim the text contents
-        b2.read_and_trim(start_phrase="THE STATS. THE STIGMA. THE SILENCE.",
-                         end_phrase="Well done!")
-        b2_parts_starter = ["THE STATS. THE STIGMA. THE SILENCE.".upper(),
-                            "THE SCIENCE OF THE MENOPAUSE TRANSITION".upper(),
-                            "Hormones and Symptoms Explained".upper(),
-                            "Menopausal Hormone Therapy, Adaptogens, and Other Interventions".upper(),
-                            "Kick Up Your Cardio".upper(),
-                            "Now's the Time to Lift Heavy Sh*t!".upper(),
-                            "Get a Jump on Menopausal Strength Losses".upper(),
-                            "Gut Health for Athletic Glory".upper(),
-                            "Eat Enough!".upper(),
-                            "Fueling for the Menopause Transition".upper(),
-                            "Nail Your Nutrition Timing".upper(),
-                            "You can't necessarily trust your thirst right now.",
-                            "Sleep Well and Recover Right".upper(),
-                            "Stability, Mobility, and Core Strength: Keep Your Foundation Strong".upper(),
-                            "Motivation and the Mental Game: Your Mind Matters".upper(),
-                            "Keep Your Skeleton Strong".upper(),
-                            "Strategies for Exercising Through the Transition".upper(),
-                            "Supplements: What You Need and What You Don't".upper(),
-                            "Pulling It All Together".upper()
+        b2.read_and_trim(start_phrase="PART I",
+                         end_phrase=end_phrase)
+        b2_parts_starter = ["On an exceptionally hot evening early in July ",
+                            "Raskolnikov was not used to crowds,",
+                            "He waked up late next day after a broken sleep.",
+                            "letter had been a torture to him, but as regards",
+                            "The question why he was now going to Razumihin agitated him",
+                            "Later on Raskolnikov happened to find out why the huckster",
+                            "The door was as before opened a tiny crack, and again",
+                            "So he lay a very long while.",
+                            "And what if there has been a search already?",
+                            "He was not completely unconscious",
+                            "Zossimov was a tall, fat man with a puffy",
+                            "This was a gentleman no longer young",
+                            "But as soon as she went out, he got up",
+                            "An elegant carriage stood in the middle of the road ",
+                            "Raskolnikov got up, and sat down on the sofa",
+                            "Razumihin waked up next morning at eight ",
+                            "He is well, quite well!",
+                            "At that moment the door was softly opened",
+                            "Raskolnikov was already entering the room.",
+                            "They were by now approaching Bakaleyev",
+                            "He looked carefully and suspiciously at the unexpected visitor.",
+                            "that landowner in whose house my sister was",
+                            "The fact was that up to the last moment he had never expected",
+                            "Raskolnikov went straight to the house on the canal",
+                            "When next morning at eleven o",
+                            "When he remembered the scene afterwards",
+                            "The morning that followed the fateful interview with Dounia",
+                            "It would be difficult to explain exactly what",
+                            "Katerina Ivanovna remained standing where she was",
+                            "Raskolnikov had been a vigorous and active champion",
+                            "Lebeziatnikov looked perturbed.",
+                            "A strange period began for Raskolnikov",
+                            "Porfiry Petrovitch ejaculated at last",
+                            "It means that I am not going to lose sight of you now.",
+                            "He spent that evening till ten o",
+                            "The same day, about seven o"
                             ]
         b2.find_parts(b2_parts_starter)
         b2.find_paragraphs()
         logging.info("\t{} is preprocessed...".format(b2))
+        time.sleep(2)
 
         # create the third book
-        b3 = Book(book_name="Queen Menopause", text_address="corpus/Queen Menopause-latin1.txt")
+        b3 = Book(book_name="Alice's Adventures in Wonderland",
+                  text_address="https://www.gutenberg.org/cache/epub/11/pg11.txt")
         # read and trim the text contents
-        b3.read_and_trim(start_phrase="I had other names for this book",
-                         end_phrase="This book was written over three years and one pandemic")
-        b3_parts_starter = ["I had other names for this book"]
-        b3_parts_starter.extend(["CHAPTER {}".format(i) for i in range(2, 13)])
+        b3.read_and_trim(start_phrase="Alice was beginning to get very tired of sitting by her sister",
+                         end_phrase=end_phrase)
+        b3_parts_starter = ["Alice was beginning to get very tired of sitting by her sister",
+                            "CHAPTER II.",
+                            "CHAPTER III.",
+                            "CHAPTER IV.",
+                            "CHAPTER V.",
+                            "CHAPTER VI.",
+                            "CHAPTER VII.",
+                            "CHAPTER VIII.",
+                            "CHAPTER IX.",
+                            "CHAPTER X.",
+                            "CHAPTER XI.",
+                            "CHAPTER XII."
+                            ]
         b3.find_parts(b3_parts_starter)
         b3.find_paragraphs()
         logging.info("\t{} is preprocessed...".format(b3))
+        time.sleep(2)
 
         # create the fourth book
-        b4 = Book(book_name="The Menopause Manifesto", text_address="corpus/The Menopause Manifesto-latin1.txt")
-        # read and trim the text contetns
-        b4.read_and_trim(start_phrase="IF MENOPAUSE WERE ON YELP it would have one star.",
-                         end_phrase="That's my manifesto.")
-        b4_parts_starter = ["IF MENOPAUSE WERE ON YELP it would have one star.",
-                            "Reclaiming the Change:",
-                            "A Second Coming of Age:",
-                            "The History and Language of Menopause:",
-                            "The Biology of Menopause:",
-                            "The Evolutionary Advantage of Menopause:",
-                            "The Timing of Menopause:",
-                            "When Periods and Ovulation Stop Before Age Forty:",
-                            "Understanding the Change:",
-                            "Metamorphoses of Menopause:",
-                            "The Heart of the Matter:",
-                            "Here or Is It Just Me?",
-                            "Menstrual Mayhem:",
-                            "Bone Health:",
-                            "This Is Your Brain on Menopause:",
-                            "The Vagina and Vulva:",
-                            "Bladder Health:",
-                            "Let's Talk About Sex:",
-                            "Will I Ever Feel Rested Again?",
-                            "Therapy for the Change:",
-                            "The Messy History and Where We Are Today",
-                            "The Cinematic Universe of Hormones:",
-                            "Phytoestrogens, Food, and Hormones:",
-                            "Bioidenticals, Naturals, and Compounding:",
-                            "What Makes a Healthy Menopause and Beyond",
-                            "Supplements and Menopause",
-                            "Contraception and the Menopause Transition:",
-                            "Taking Charge of the Change",
-                            "Welcome to My Menoparty:",
-                            "Final Thoughts:"]
+        b4 = Book(book_name="Metamorphosis", text_address="https://www.gutenberg.org/files/5200/5200-0.txt")
+        # read and trim the text contents
+        b4.read_and_trim(start_phrase="Translated by David Wyllie",
+                         end_phrase=end_phrase)
+        b4_parts_starter = ["I",
+                            "II",
+                            "III"]
         b4.find_parts(b4_parts_starter)
         b4.find_paragraphs()
         logging.info("\t{} is preprocessed...".format(b4))
 
-        # create the fifth book
-        b5 = Book(book_name="Menopausing", text_address="corpus/Menopausing-latin1-with relevant image text.txt")
-        # read and trim the text contetns
-        b5.read_and_trim(start_phrase="INTRODUCTION:",
-                         end_phrase="MENOPAUSE WARRIORS")
-        b5_parts_starter = ["INTRODUCTION:"]
-        b5_parts_starter.extend(["Chapter {}\n".format(i) for i in range(1, 15)])
-        b5.find_parts(b5_parts_starter)
-        b5.find_paragraphs()
-        logging.info("\t{} is preprocessed...".format(b4))
 
         bookshelf = BookShelf()
         bookshelf.add_book(b1)
         bookshelf.add_book(b2)
         bookshelf.add_book(b3)
         bookshelf.add_book(b4)
-        bookshelf.add_book(b5)
         logging.info('all books are added to the bookshelf object.\n')
         return bookshelf
 
@@ -189,9 +181,15 @@ class Book:
         self.parts = []
         self.paragraphs = {}
 
-    def read_and_trim(self, start_phrase, end_phrase):
-        with open(self.text_address, 'r', encoding='latin-1') as fp:
-            self.whole_text = fp.read()
+    def read_and_trim(self, start_phrase, end_phrase, is_file=False):
+        if is_file:
+            with open(self.text_address, 'r', encoding='latin-1') as fp:
+                self.whole_text = fp.read()
+        else:
+            headers = {
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36'}
+            req = requests.get(self.text_address, headers=headers)
+            self.whole_text = req.text
         self.trimmed_text = self.whole_text[self.whole_text.index(start_phrase):self.whole_text.index(end_phrase)]
         logging.info('\t\ttext are trimmed - {}'.format(self.book_name))
 

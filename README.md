@@ -22,11 +22,10 @@ Here, I have implemented several classes to make the process of topic modelling 
 
 
 ## Sample Books
-5 sample books are automatically downloaded from [Project Gutenberg](https://www.gutenberg.org/):
+4 sample books are automatically downloaded from [Project Gutenberg](https://www.gutenberg.org/):
 - A Christmas Carol (Charles Dickens)
 - Crime and Punishment (Fyodor Dostoyevsky)
-- Pride and Prejudice (Jane Austin)
-- Romeo and Juliet (William Shakespeare)
+- Alice's Adventures in Wonderland (Lewis Carroll)
 - Metamorphosis  (Franz Kafka)
 
 
