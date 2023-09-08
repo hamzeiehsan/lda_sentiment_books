@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 
 class BookShelf:
     @staticmethod
-    def read_menopause_books():
+    def read_sample_books():
         logging.info('{} - start checking the book files'.format('Bookshelf:'))
         # create the first book object
         b1 = Book(book_name='Hormone Repair Manual', text_address='corpus/Hormone Repair Manual-latin1.txt')
@@ -229,4 +229,4 @@ class Book:
 
 if __name__ == "__main__":
     print('Creating a bookshelf with default books in the shelf')
-    bookshelf = BookShelf.read_menopause_books()
+    bookshelf = BookShelf.read_sample_books()
